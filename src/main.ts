@@ -7,6 +7,7 @@ import { createPlane } from '@/core/plane'
 import { createAmbientLight, createDirectionalLight } from '@/core/light'
 
 import './assets/style.css'
+import { createGUI } from '@/core/gui'
 
 function createApp() {
   const renderer = createRenderer()
@@ -15,12 +16,22 @@ function createApp() {
   const plane = createPlane()
   const directionalLight = createDirectionalLight()
   const ambientLight = createAmbientLight()
+  const { gui, fpsGraph } = createGUI()
 
   scene.add(camera)
   scene.add(directionalLight)
   scene.add(ambientLight)
   scene.add(sphere)
   scene.add(plane)
+
+  const sphereFolder = gui.addFolder({
+    title: 'Sphere',
+  })
+
+  sphereFolder.addInput(sphere.position, 'x', { min: -10, max: 10, step: 0.1 })
+  sphereFolder.addInput(sphere.position, 'y', { min: -10, max: 10, step: 0.1 })
+  sphereFolder.addInput(sphere.position, 'z', { min: -10, max: 10, step: 0.1 })
+  sphereFolder.addInput(sphere.material, 'wireframe')
 
   const controls = new OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true
@@ -37,7 +48,9 @@ function createApp() {
   })
 
   function loop() {
+    fpsGraph.begin()
     renderer.render(scene, camera)
+    fpsGraph.end()
     requestAnimationFrame(loop)
   }
 

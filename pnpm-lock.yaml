@@ -2,18 +2,24 @@ lockfileVersion: 5.4
 
 specifiers:
   '@antfu/eslint-config': ^0.27.0
+  '@tweakpane/core': ^1.1.0
+  '@tweakpane/plugin-essentials': ^0.1.5
   '@types/node': ^18.11.2
   '@types/three': ^0.144.0
   eslint: ^8.23.0
   three: ^0.145.0
+  tweakpane: ^3.1.0
   typescript: ^4.6.4
   vite: ^3.1.0
 
 dependencies:
+  '@tweakpane/plugin-essentials': 0.1.5_tweakpane@3.1.0
   three: 0.145.0
+  tweakpane: 3.1.0
 
 devDependencies:
   '@antfu/eslint-config': 0.27.0_z4bbprzjrhnsfa24uvmcbu7f5q
+  '@tweakpane/core': 1.1.0
   '@types/node': 18.11.2
   '@types/three': 0.144.0
   eslint: 8.25.0
@@ -194,6 +200,18 @@ packages:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.13.0
     dev: true
+
+  /@tweakpane/core/1.1.0:
+    resolution: {integrity: sha512-vbbiQb+aoFI13lIbE7DJvhHZVE1YlUpGoaAamSpU6wLp2jA3VowS1wfRJBBB8IBCYm7nF6ULl7zfJKxl1XdyfA==}
+    dev: true
+
+  /@tweakpane/plugin-essentials/0.1.5_tweakpane@3.1.0:
+    resolution: {integrity: sha512-dt+fwtUEVmBxsVhGNSqtY6dN3rOmxIt3zSA/cSFMs2eBbMrnBTSkJBe2JMXKodTTR6OOFihq6yxyRFqG5wsP3w==}
+    peerDependencies:
+      tweakpane: ^3.1.0
+    dependencies:
+      tweakpane: 3.1.0
+    dev: false
 
   /@types/json-schema/7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
@@ -2232,6 +2250,10 @@ packages:
       tslib: 1.14.1
       typescript: 4.8.4
     dev: true
+
+  /tweakpane/3.1.0:
+    resolution: {integrity: sha512-PGAp/LPQdHwzL7/iAW4lV1p9iPQTti7YMjMWO48CoYjvZRS59RmgQnhEGzKzqST1JnmOYmQUjTe8bdhlZRJs5A==}
+    dev: false
 
   /type-check/0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
