@@ -1,5 +1,5 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { camera, sizes } from '@/core/camera'
+import { createCamera } from '@/core/camera'
 import { createRenderer, updateRenderer } from '@/core/renderer'
 import { createSphere } from '@/core/sphere'
 import { createScene } from '@/core/scene'
@@ -8,8 +8,15 @@ import { createAmbientLight, createDirectionalLight } from '@/core/light'
 import { createGUI } from '@/core/gui'
 
 import './assets/style.css'
+import { Size } from '@/types/base.type'
+
+const size: Size = {
+  width: window.innerWidth,
+  height: window.innerHeight
+}
 
 function createApp() {
+  const camera = createCamera(size)
   const renderer = createRenderer()
   const scene = createScene()
   const sphere = createSphere()
@@ -61,11 +68,11 @@ function createApp() {
     updateRenderer(renderer)
 
     window.addEventListener('resize', () => {
-      sizes.width = window.innerWidth
-      sizes.height = window.innerHeight
+      size.width = window.innerWidth
+      size.height = window.innerHeight
       updateRenderer(renderer)
 
-      camera.aspect = sizes.width / sizes.height
+      camera.aspect = size.width / size.height
       camera.updateProjectionMatrix()
     })
   }

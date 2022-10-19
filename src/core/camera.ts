@@ -1,20 +1,12 @@
 import { PerspectiveCamera } from 'three'
+import { Size } from '@/types/base.type'
 
-const VERTICAL_FIEL_OF_VIEW = 45
-
-export const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight
-}
-
-export function createCamera() {
+export function createCamera(size: Size, verticalFieldOfView = 45) {
   const camera = new PerspectiveCamera(
-    VERTICAL_FIEL_OF_VIEW,
-    sizes.width / sizes.height,
+    verticalFieldOfView,
+    size.width / size.height,
   )
   camera.position.set(9, 4, 9)
 
   return camera
 }
-
-export const camera = createCamera()
