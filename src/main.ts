@@ -65,12 +65,12 @@ function createApp() {
   }
 
   function initializeRenderer() {
-    updateRenderer(renderer)
+    updateRenderer(renderer, size)
 
     window.addEventListener('resize', () => {
       size.width = window.innerWidth
       size.height = window.innerHeight
-      updateRenderer(renderer)
+      updateRenderer(renderer, size)
 
       camera.aspect = size.width / size.height
       camera.updateProjectionMatrix()

@@ -1,5 +1,5 @@
-import { sizes } from '@/core/camera'
 import { PCFSoftShadowMap, WebGLRenderer } from 'three'
+import { Size } from '@/types/base.type'
 
 export function createRenderer() {
 
@@ -16,8 +16,8 @@ export function createRenderer() {
   return renderer
 }
 
-export function updateRenderer(renderer: WebGLRenderer) {
-  renderer.setSize(sizes.width, sizes.height)
+export function updateRenderer(renderer: WebGLRenderer, size: Size) {
+  renderer.setSize(size.width, size.height)
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 }
 
