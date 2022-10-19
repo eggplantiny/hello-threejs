@@ -1,13 +1,13 @@
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { createRenderer, updateRenderer } from '@/core/renderer'
 import { camera, sizes } from '@/core/camera'
+import { createRenderer, updateRenderer } from '@/core/renderer'
 import { createSphere } from '@/core/sphere'
 import { createScene } from '@/core/scene'
 import { createPlane } from '@/core/plane'
 import { createAmbientLight, createDirectionalLight } from '@/core/light'
+import { createGUI } from '@/core/gui'
 
 import './assets/style.css'
-import { createGUI } from '@/core/gui'
 
 function createApp() {
   const renderer = createRenderer()
@@ -18,34 +18,62 @@ function createApp() {
   const ambientLight = createAmbientLight()
   const { gui, fpsGraph } = createGUI()
 
-  scene.add(camera)
-  scene.add(directionalLight)
-  scene.add(ambientLight)
-  scene.add(sphere)
-  scene.add(plane)
+  function initializeScene() {
+    scene.add(camera)
+    scene.add(directionalLight)
+    scene.add(ambientLight)
+    scene.add(sphere)
+    scene.add(plane)
+  }
 
-  const sphereFolder = gui.addFolder({
-    title: 'Sphere',
-  })
+  function initializeGUI() {
+    const sphereFolder = gui.addFolder({
+      title: 'Sphere',
+    })
 
-  sphereFolder.addInput(sphere.position, 'x', { min: -10, max: 10, step: 0.1 })
-  sphereFolder.addInput(sphere.position, 'y', { min: -10, max: 10, step: 0.1 })
-  sphereFolder.addInput(sphere.position, 'z', { min: -10, max: 10, step: 0.1 })
-  sphereFolder.addInput(sphere.material, 'wireframe')
+    sphereFolder.addInput(sphere.position, 'x', { min: -10, max: 10, step: 0.1 })
+    sphereFolder.addInput(sphere.position, 'y', { min: -10, max: 10, step: 0.1 })
+    sphereFolder.addInput(sphere.position, 'z', { min: -10, max: 10, step: 0.1 })
+    sphereFolder.addInput(sphere.material, 'wireframe')
 
-  const controls = new OrbitControls(camera, renderer.domElement)
-  controls.enableDamping = true
+    const directionalLightFolder = gui.addFolder({
+      title: 'Directional Light',
+    })
 
-  updateRenderer(renderer)
+    directionalLightFolder.addInput(directionalLight.position, 'x', { min: -10, max: 10, step: 0.1 })
+    directionalLightFolder.addInput(directionalLight.position, 'y', { min: -10, max: 10, step: 0.1 })
+    directionalLightFolder.addInput(directionalLight.position, 'z', { min: -10, max: 10, step: 0.1 })
+    directionalLightFolder.addInput(directionalLight, 'intensity', { min: 0, max: 10, step: 0.1 })
 
-  window.addEventListener('resize', () => {
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+    const ambientLightFolder = gui.addFolder({
+      title: 'Ambient Light',
+    })
+
+    ambientLightFolder.addInput(ambientLight, 'intensity', { min: 0, max: 10, step: 0.1 })
+  }
+
+  function initializeControls() {
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = true
+  }
+
+  function initializeRenderer() {
     updateRenderer(renderer)
 
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-  })
+    window.addEventListener('resize', () => {
+      sizes.width = window.innerWidth
+      sizes.height = window.innerHeight
+      updateRenderer(renderer)
+
+      camera.aspect = sizes.width / sizes.height
+      camera.updateProjectionMatrix()
+    })
+  }
+
+  initializeScene()
+  initializeControls()
+  initializeRenderer()
+  initializeGUI()
 
   function loop() {
     fpsGraph.begin()
