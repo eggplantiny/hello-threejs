@@ -1,4 +1,4 @@
-import { BoxGeometry, Mesh, MeshStandardMaterial } from 'three'
+import { CircleGeometry, Mesh, MeshStandardMaterial } from 'three'
 
 export function createBadge() {
   const metal = new MeshStandardMaterial({
@@ -11,7 +11,8 @@ export function createBadge() {
     roughness: 0.3,
     metalness: 0.99,
   })
-  const geometry = new BoxGeometry(10, 10, 0.1)
+
+  const geometry = new CircleGeometry(10, 32)
   const badge = new Mesh(geometry, [metal, metal, metal, metal, roughMetal, metal])
 
   return badge
