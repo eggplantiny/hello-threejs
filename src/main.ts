@@ -13,6 +13,7 @@ import { createBadge } from '@/core/bedge'
 import { createBuilding } from '@/core/entity/building'
 import { createFloor } from '@/core/entity/floor'
 import { createElevator } from '@/core/entity/elevator'
+import { App } from '@/core/app'
 
 const size: Size = {
   width: window.innerWidth,
@@ -33,6 +34,7 @@ function createApp() {
   const building = createBuilding()
   const floors = createFloor({
     buildingHeight: building.geometry.parameters.height,
+    numFloors: 10,
   })
   const { elevator, moveToFloor } = createElevator({
     buildingHeight: building.geometry.parameters.height,
@@ -74,7 +76,7 @@ function createApp() {
       title: 'Elevator',
     })
 
-    elevatorFolder.addInput(asd, 'floor', { min: 0, max: 5, step: 1 })
+    elevatorFolder.addInput(asd, 'floor', { min: 1, max: 10, step: 1 })
     // const sphereFolder = gui.addFolder({
     //   title: 'Sphere',
     // })
@@ -135,6 +137,18 @@ function createApp() {
   }
 }
 
-const { loop } = createApp()
+function createApp2() {
+  const canvas = document.querySelector('#three') as HTMLCanvasElement
+  const app = new App(canvas)
 
-loop()
+  return app
+}
+
+// const { loop } = createApp()
+//
+// loop()
+
+const app = createApp2()
+
+app.bindEventListeners()
+app.render()
