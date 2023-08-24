@@ -1,14 +1,19 @@
 import { SceneManager } from '@/core/managers/SceneManager'
 import { GuiManager } from '@/core/managers/GuiManager'
+import type { APP_EVENT } from '@/core/managers/EventManager'
+import EventManager from '@/core/managers/EventManager'
 
 export class App {
   private canvas: HTMLCanvasElement
   private sceneManager: SceneManager
   private guiManager: GuiManager
+  private eventManager = EventManager.getInstance()
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(canvas: HTMLCanvasElement, props: {
+    numFloors: number
+  }) {
     this.canvas = canvas
-    this.sceneManager = new SceneManager(canvas)
+    this.sceneManager = new SceneManager(canvas, props)
     this.guiManager = new GuiManager()
   }
 
@@ -39,13 +44,16 @@ export class App {
 
   public run(): App {
     this.render()
+    return this
+  }
 
-    setInterval(() => {
-      if (this.sceneManager.currentFloor === 10)
-        this.sceneManager.currentFloor = 1
-      else
-        this.sceneManager.currentFloor += 1
-    }, 2000)
+  public setFloor(floor: number): App {
+    this.sceneManager.currentFloor = floor
+    return this
+  }
+
+  public addEvent(eventName: APP_EVENT, callback: () => void): App {
+    this.eventManager.addEvent(eventName, callback)
     return this
   }
 

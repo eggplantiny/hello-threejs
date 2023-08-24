@@ -6,6 +6,7 @@ import type { ScreenDimensions } from '@/types/base.type'
 import type { Subject } from '@/core/subjects/Subject'
 import { Building } from '@/core/subjects/modules/Building'
 import { Elevator } from '@/core/subjects/modules/Elevator'
+import ClockManager from '@/core/managers/ClockManager'
 
 interface Props {
   numFloors: number
@@ -92,6 +93,7 @@ export class SceneManager {
       width: building.width - 1,
       depth: building.depth - 1,
       height: building.roomHeight,
+      duration: 1000,
     })
     return [
       building,
@@ -104,10 +106,6 @@ export class SceneManager {
     camera.position.z = subject.object.position.z + 36
   }
 
-  private get clock() {
-    return Date.now()
-  }
-
   private setFloor(floorNumber: number) {
     this.elevator.moveTo(floorNumber)
   }
@@ -117,9 +115,8 @@ export class SceneManager {
   }
 
   public update() {
-    const now = this.clock
     // const elevator = this.elevator
-    this.subjects.forEach(subject => subject.update(now))
+    this.subjects.forEach(subject => subject.update(ClockManager.getInstance().now()))
     this.camera.position.y = this.elevator.position.y + 36
     this.renderer.render(this.scene, this.camera)
   }

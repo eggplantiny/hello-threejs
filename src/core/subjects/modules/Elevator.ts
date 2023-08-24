@@ -1,5 +1,7 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from 'three'
 import { Subject } from '@/core/subjects/Subject'
+import EventManager from '@/core/managers/EventManager'
+import ClockManager from '@/core/managers/ClockManager'
 
 interface Props {
   buildingHeight: number
@@ -14,25 +16,26 @@ interface Props {
 const DEFAULT_PROPS: Props = {
   buildingHeight: 50,
   roomHeight: 10,
-  duration: 1000,
+  duration: 4000,
   width: 5,
   height: 5,
   depth: 5,
   color: 0x525252,
 }
 
+type ELEVATOR_STATUS = 'move_start' | 'moving' | 'move_end'
+
 export class Elevator extends Subject<Mesh> {
-  // private readonly _buildingHeight: number
-  // private readonly _roomHeight: number
+  private readonly _roomHeight: number
   private readonly _duration: number
-  private readonly _height: number
   private _targetY = 0
   private _startTime = 0
+  private eventManager = EventManager.getInstance()
+  private _status: ELEVATOR_STATUS = 'move_end'
 
   constructor(props: Partial<Props>) {
     const {
-      buildingHeight,
-      // roomHeight,
+      roomHeight,
       duration,
       width,
       height,
@@ -45,27 +48,40 @@ export class Elevator extends Subject<Mesh> {
       new MeshBasicMaterial({ color }),
     ))
 
-    this.object.position.y = -(buildingHeight / 2)
-    // this._buildingHeight = buildingHeight
-    // this._roomHeight = roomHeight
+    this._roomHeight = roomHeight
     this._duration = duration
-    this._height = height
   }
 
   public moveTo(floorNumber: number) {
-    this._targetY = floorNumber * this.height - this.height
-    this._startTime = Date.now()
+    const clock = ClockManager.getInstance()
+    this._targetY = ((floorNumber - 1) * this._roomHeight)
+    this._startTime = clock.now()
+
+    this.status = 'move_start'
   }
 
-  public update(time: number): void {
-    const elapsed = time - this._startTime
-    const progress = elapsed / this.duration
+  public update(currentTime: number): void {
+    const progress = (currentTime - this._startTime) / this.duration
 
-    if (progress < 1)
-      this.object.position.y = this.object.position.y + (this._targetY - this.object.position.y) * progress
-
-    else
+    if (progress < 1) {
+      this.object.position.y = this.object.position.y + (this._targetY - this.object.position.y) * progress * progress
+      this.status = 'moving'
+    }
+    else {
       this.object.position.y = this._targetY
+      this.status = 'move_end'
+    }
+  }
+
+  public get status() {
+    return this._status
+  }
+
+  private set status(status: ELEVATOR_STATUS) {
+    if (this._status === status)
+      return
+    this._status = status
+    this.eventManager.trigger(status)
   }
 
   public get position() {
@@ -74,9 +90,5 @@ export class Elevator extends Subject<Mesh> {
 
   private get duration() {
     return this._duration
-  }
-
-  private get height() {
-    return this._height
   }
 }
