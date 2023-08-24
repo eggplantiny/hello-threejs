@@ -1,32 +1,41 @@
 import { BoxGeometry, Mesh, MeshBasicMaterial } from 'three'
+import { CSG } from 'three-csg-ts'
 import { Subject } from '@/core/subjects/Subject'
-import type { DeepPartial, Position } from '@/types/base.type'
 
 interface Props {
   width: number
   height: number
   depth: number
   color: string | number
-  position: Position
+  opacity: number
+  transparent: boolean
 }
 
 const DEFAULT_PROPS: Props = {
-  width: 8,
+  width: 10,
   height: 1,
   depth: 8,
-  color: 0xFF0000,
-  position: { x: 0, y: 0, z: 0 },
+  color: 0x555555,
+  opacity: 1,
+  transparent: false,
 }
 
 export class Floor extends Subject<Mesh> {
-  constructor(props: DeepPartial<Props> = {}) {
-    const { width, height, depth, position, color } = { ...DEFAULT_PROPS, ...props }
-    super(new Mesh(
+  constructor(props: Partial<Props> = {}) {
+    const { width, height, depth, color, opacity, transparent } = { ...DEFAULT_PROPS, ...props }
+    const material = new MeshBasicMaterial({ color, opacity, transparent })
+    const leftSide = new Mesh(
       new BoxGeometry(width, height, depth),
-      new MeshBasicMaterial({ color }),
-    ))
+      material,
+    )
 
-    this.object.position.y = position.y ?? DEFAULT_PROPS.position.y
+    const rightSide = new Mesh(
+      new BoxGeometry(width / 2, height, depth / 2),
+      material,
+    )
+
+    const result = CSG.subtract(leftSide, rightSide)
+    super(result as Mesh)
   }
 
   update(_time: number): void {

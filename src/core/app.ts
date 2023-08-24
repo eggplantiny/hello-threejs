@@ -12,12 +12,7 @@ export class App {
     this.guiManager = new GuiManager()
   }
 
-  bindEventListeners() {
-    this.resize()
-    window.addEventListener('resize', this.resize.bind(this), false)
-  }
-
-  resize() {
+  private resize() {
     const { canvas } = this
 
     canvas.style.width = '100%'
@@ -29,10 +24,32 @@ export class App {
     this.sceneManager.resize()
   }
 
-  render() {
+  private render() {
     this.guiManager.fps.begin()
     requestAnimationFrame(this.render.bind(this))
     this.sceneManager.update()
     this.guiManager.fps.end()
+  }
+
+  bindEventListeners(): App {
+    this.resize()
+    window.addEventListener('resize', this.resize.bind(this), false)
+    return this
+  }
+
+  public run(): App {
+    this.render()
+
+    setInterval(() => {
+      if (this.sceneManager.currentFloor === 10)
+        this.sceneManager.currentFloor = 1
+      else
+        this.sceneManager.currentFloor += 1
+    }, 2000)
+    return this
+  }
+
+  public dispose(): void {
+    this.sceneManager.dispose()
   }
 }

@@ -1,8 +1,10 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial } from 'three'
+import type { Mesh } from 'three'
+import { CSG } from 'three-csg-ts'
 import { Subject } from '@/core/subjects/Subject'
+import { Room } from '@/core/subjects/modules/Room'
 
 interface Props {
-  floorHeight: number
+  roomHeight: number
   numFloors: number
   width: number
   depth: number
@@ -13,10 +15,10 @@ interface Props {
 
 const DEFAULT_PROPS: Props = {
   color: 0xAAAAAA,
-  floorHeight: 10,
+  roomHeight: 10,
   width: 12,
   depth: 12,
-  numFloors: 5,
+  numFloors: 10,
   opacity: 0.66,
   transparent: true,
 }
@@ -28,20 +30,31 @@ export class Building extends Subject<Mesh> {
   private readonly _numFloors: number
 
   constructor(props: Partial<Props> = {}) {
-    const { color, floorHeight, numFloors, width, depth, opacity, transparent } = { ...DEFAULT_PROPS, ...props }
-    const height = floorHeight * numFloors
-    const buildingGeometry = new BoxGeometry(width, height, depth)
-    const buildingMaterial = new MeshBasicMaterial({
-      color,
+    const { color, roomHeight, numFloors, width, depth, opacity, transparent } = { ...DEFAULT_PROPS, ...props }
+
+    const rooms = Array(numFloors).fill(0).map(() => new Room({
       opacity,
       transparent,
+      color,
+      width,
+      depth,
+      height: roomHeight,
+    }))
+
+    rooms.forEach((room, index) => {
+      room.object.position.y = index * roomHeight
+      room.object.updateMatrix()
     })
-    const building = new Mesh(buildingGeometry, buildingMaterial)
-    super(building)
+
+    const result = rooms.reduce((acc, room) => CSG.union(acc, room.object), rooms[0].object.clone())
+
+    rooms.forEach(x => x.dispose())
+
+    super(result as Mesh)
 
     this._width = width
     this._depth = depth
-    this._height = height
+    this._height = roomHeight * numFloors
     this._numFloors = numFloors
   }
 
@@ -59,6 +72,10 @@ export class Building extends Subject<Mesh> {
 
   get height() {
     return this._height
+  }
+
+  get roomHeight() {
+    return this._height / this._numFloors
   }
 
   get numFloors() {
